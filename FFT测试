@@ -1,0 +1,44 @@
+%%%%%%
+%%读取1.txt文档，并且对其中的第二列数据进行FFT变换，绘制幅度谱和相位谱
+%%%%%
+clc
+clear
+s1 = importdata('1.txt');
+data = s1(:,2);
+N = length(data);%数据长度
+Fs = 1000;%采样率
+deltaf = Fs/N;%频率分辨率
+data = data - mean(data); %去除直流分量
+datafft = fft(data);%快速傅里叶变换
+datafft = datafft(1:N/2+1);%只看变换结果的一半
+Magfft = abs(datafft);%求变换结果模值
+Magmin = min(Magfft);
+Magmax = max(Magfft);
+f = ((1:N/2+1)-1)*deltaf;
+fmax = max(f);
+%f = f';
+plot(f,Magfft,'r');%绘制连线图
+axis ( [0 fmax Magmin*(1-0.1) Magmax*(1+0.1)] );%设置坐标轴范围
+grid on
+xlabel('f(Hz)'),ylabel('幅度'), title('傅里叶变换');
+hold on
+scatter(f,Magfft,15,'b','filled');%绘制散点图
+figure
+subplot(2,1,1)
+plot(f,Magfft,'g');%绘制连线图
+xlabel('频率(Hz)')
+ylabel('幅值')
+title('FFT变换幅值图')
+grid on
+subplot(2,1,2)
+phase_angle=angle(datafft); %angle函数的返回结果为弧度
+phase_angle=rad2deg(phase_angle);
+plot(f,phase_angle)
+xlabel('频率(Hz)')
+ylabel('相位角(degree)')
+title('FFT变换相位图')
+% scatter(f,Magfft,15,'b','filled');%绘制散点图
+% xlabel('频率(Hz)')
+% ylabel('幅值')
+% title('FFT散点图')
+grid on
