@@ -1,0 +1,12 @@
+clc
+clear
+%txtlist = dir('E:\基础知识\matlab教程\mymatlab\data\single\*.txt');
+path = 'E:\基础知识\matlab教程\mymatlab\data\single\';
+txtlist = dir([path,'*.txt']);
+L = length(txtlist);
+P = cell(1,L);%定义一个细胞数组，用于存放所有txt文件
+% txtlist(i).name;%这里获得的只是该路径下的文件名，如1.txt是相对路径
+for i = 1:L
+ filename{i} = [path,txtlist(i).name];%通过字符串拼接获得的就是绝对路径了
+ P{1,i} = load(filename{i});
+end
