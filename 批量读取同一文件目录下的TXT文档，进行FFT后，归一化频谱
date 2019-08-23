@@ -1,0 +1,52 @@
+clc
+clear
+%txtlist = dir('E:\基础知识\matlab教程\mymatlab\data\single\*.txt');
+% path = 'E:\基础知识\matlab教程\mymatlab\data\single\';
+path = 'E:\基础知识\matlab教程\mymatlab\data\踢一脚\';
+%path = 'E:\基础知识\matlab教程\mymatlab\data\后车门\后车门\';
+txtlist = dir([path,'*.txt']);
+L = length(txtlist);
+P = cell(1,L);%定义一个细胞数组，用于存放所有txt文件
+% txtlist(i).name;%这里获得的只是该路径下的文件名，如1.txt是相对路径
+for i = 1:L
+ filename{i} = [path,txtlist(i).name];%通过字符串拼接获得的就是绝对路径了
+ P{1,i} = (load(filename{i}))';
+end
+% %%整理顺序,注意此次文件夹TXT文件是50个，根据数量不同，整理方法略有差异
+% sqdata = cell(1,L);%定义一个细胞数组，用于存放整理顺序后的所有txt文件
+% rowNum = floor(L/11);
+% renum = mod(L,11);
+% for  i = 0:rowNum
+%        for j =0:9
+%             if((i == 0)&&(j == 0))
+%                     continue;
+%                 elseif((i == 0)&&(0<j)&&(j<6))
+%                     sqdata{1,10*i+j} =  P{1,(j-1)*11+1}; 
+%                     continue;
+%                 elseif ((i == 0)&&(5<j))
+%                     sqdata{1,10*i+j} =  P{1,41+j};
+%                      continue;
+%              end
+%                sqdata{1,10*i+j} = P{1,11*i+j-9};
+%        end    
+% end
+% sqdata{1,50} = P{1,46};
+% s= sqdata{1,1};
+s= P{1,1};
+data = s(:,2);
+%plot(data)
+N = length(s(:,2));%数据长度
+Fs = 1000;%采样率
+deltaf = Fs/N;%频率分辨率
+data = data - mean(data); %去除直流分量
+datafft = fft(data);%快速傅里叶变换
+datafft = datafft(1:N/2+1);%只看变换结果的一半
+Magfft = abs(datafft);%求变换结果模值
+Magmin = min(Magfft);%幅度最大值
+Magmax = max(Magfft);%幅度最小值
+Magfft = (Magfft-Magmin)/(Magmax-Magmin);%归一化
+f = ((1:N/2+1)-1)*deltaf;%X轴
+plot(f,Magfft,'r');%绘制连线图
+% axis ( [0 fmax Magmin*(1-0.1) Magmax*(1+0.1)] );%设置坐标轴范围
+grid on
+xlabel('f(Hz)'),ylabel('幅度'), title('傅里叶变换');
