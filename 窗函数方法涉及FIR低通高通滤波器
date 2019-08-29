@@ -1,0 +1,19 @@
+%%学以致用-《深入浅出数字信号处理》江志红--P246
+clc
+clear
+fs = 44100;%采样率
+fL = 1000;%低通滤波器截止频率
+fH = 1000;%高通滤波器截止频率
+wc = 2*pi*fL/fs;%计算数字角频率
+N = 183;%滤波器长度
+hl= fir1(N-1,wc/pi);%计算低通滤波器系数
+hh = fir1(N-1,wc/pi,'high',hamming(N));%计算高通滤波器系数
+[HL,f] = freqz(hl,1,44100,fs);%计算滤波器频率响应
+[HH,f] = freqz(hh,1,44100,fs);%计算滤波器频率响应
+MagHL = abs(HL);%计算幅度
+MagHH = abs(HH);%计算幅度
+plot(f,20*log(MagHL));%绘制频谱
+hold on
+plot(f,20*log(MagHH));%绘制频谱
+legend('HL','HH');
+grid;
