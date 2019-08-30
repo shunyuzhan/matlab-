@@ -1,0 +1,35 @@
+%设计一个低通滤波器，截止频率30hz,采样率1000hz,过渡带30hz,hangming窗，回值滤波前和滤波后原始数据和频谱
+clc
+clear
+s1 = importdata('E:\基础知识\matlab教程\mymatlab\data\后车门\后车门\1_19-52-14-0-default.txt');
+data = s1(:,2);
+N = length(data);%数据长度
+Fs = 1000;%采样率
+deltaf = Fs/N;%频率分辨率
+data = data - mean(data); %去除直流分量
+datafft = fft(data);%快速傅里叶变换
+datafft = datafft(1:N/2+1);%只看变换结果的一半
+Magfft = abs(datafft);%求变换结果模值
+f = ((1:N/2+1)-1)*deltaf;%X轴
+%plot(f,Magfft,'r');%绘制连线图
+wn = 3/50;%30Hz对应的数字角频率
+Order = 110;
+LPCoef = fir1(Order-1,wn);
+% %freqz(LPCoef,1);%计算滤波器频率响应
+filtereddata = filter(LPCoef,1,data);
+filtereddata = filtereddata - mean(filtereddata); %去除直流分量
+Filterdfft = fft(filtereddata);%快速傅里叶变换
+Filterdfft = Filterdfft(1:N/2+1);%只看变换结果的一半
+FilterdMagfft = abs(Filterdfft);%求变换结果模值
+plot(f,20*log(MagAtt));
+figure
+subplot(211);
+plot(data,'r');
+hold on
+plot(filtereddata,'b')
+legend('原始数据','滤波后');
+subplot(212);
+plot(f,Magfft,'r');%绘制连线图
+hold on
+plot(f,FilterdMagfft,'b');%绘制连线图
+legend('原始数据','滤波后');
